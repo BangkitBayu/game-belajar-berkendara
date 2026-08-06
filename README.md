@@ -39,11 +39,11 @@ GameBelajarBerkendara/
 ```
 
 ## Yang Dibutuhkan
-- NodeJS 20+ (LTS Recommended)
+- NodeJS 20+ (LTS Recommended):
 [Install Node Js](https://nodejs.org/en/download)
-- Git
+- Git:
 [Install Git](https://git-scm.com/install/windows)
-- Code Editor(Free)
+- Code Editor (Free)
 
 ## Cara Install Proyek dan Menjalankan
 1. Buka git terminal, lalu Clone Repository
@@ -57,7 +57,7 @@ git clone "https://github.com/BangkitBayu/game-belajar-berkendara.git"
 npm install
 ```
 
-3.Setelah install depedensi, lalu jalankan ini untuk menjalankan
+3. Setelah install depedensi, lalu jalankan perintah ini untuk menjalankan proyek
 * Dev
 ```
 npm run dev
