@@ -10,30 +10,28 @@ export default class WelcomeScene extends Phaser.Scene {
         // Image asset
         this.load.image('background', '/src/assets/background.png')
         this.load.image('logo', '/src/assets/logo.png')
-
-        // Sound asset
-        this.load.audio('backsound', '/src/assets/sound/backsound.mp3')
-        this.load.audio('click', '/src/assets/sound/click.mp3');
+        this.load.image('iconSoundOn', '/src/assets/sound-on.png')
+        this.load.image('iconSoundOff', '/src/assets/sound-off.png')
     }
 
     create() {
         // Jarak antar elemen
         let gap = 20
 
+        // Ambil bgm music
+        const musicScene = this.scene.get('MusicScene')
+
         // Untuk memasukkan background
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0)
         background.setDisplaySize(this.scale.width, this.scale.height)
         background.setDepth(-1)
 
-        // Untuk memasukkan musik
-        const backsound = this.sound.add('backsound', { loop: true })
-        backsound.play();
-
-        const clickSfx = this.sound.add('click')
+        const soundBtn = this.add.image(this.scale.width - 20, 10, 'iconSoundOn').setScale(0.4).setOrigin(1, 0).setInteractive({ useHandCursor: true })
 
         // Untuk mengambil nilai tengah x dan y
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2
-        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2
+
+
 
         const title = this.add.text(screenCenterX, 200, 'Belajar Berkendara', TEXT_STYLES.title).setOrigin(0.5);
 
@@ -44,9 +42,16 @@ export default class WelcomeScene extends Phaser.Scene {
 
         description.y = (logo.y + logo.displayHeight / 2) + (description.height / 2 + gap);
 
+        soundBtn.on('pointerdown', (pointer, localX, localY, event) => {
+            event.stopPropagation()
+            const isMuted = musicScene.toggleMuted()
+
+            soundBtn.setTexture(isMuted ? 'iconSoundOn' : 'iconSoundOff')
+        })
+
         this.input.once('pointerdown', () => {
-            clickSfx.play();
-            this.scene.start('LevelsScene')
+            this.sound.play('sfxClick')
+            this.scene.start('VehicleScene')
         })
     }
 

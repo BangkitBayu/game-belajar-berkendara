@@ -2,7 +2,9 @@ import Phaser from "phaser";
 import WelcomeScene from "../scenes/WelcomeScene";
 import LevelsScene from "../scenes/LevelsScene";
 import VehicleScene from "../scenes/VehicleScene";
-
+import BootScene from "../scenes/BootScene";
+import PreloadScene from "../scenes/PreloadScene";
+import MusicScene from "../scenes/MusicScene";
 
 /** @type {Phaser.Types.Core.GameConfig} */
 const phaserConfig = {
@@ -31,7 +33,7 @@ const phaserConfig = {
     },
 
     // Urutan scene game
-    scene: [VehicleScene]
+    scene: [BootScene, PreloadScene, MusicScene, WelcomeScene,VehicleScene, LevelsScene]
 }
 
 export default phaserConfig
