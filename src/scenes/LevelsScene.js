@@ -23,8 +23,8 @@ export default class LevelsScene extends Phaser.Scene {
         background.setDepth(-1)
 
         // // Untuk memasukkan musik
-        // const backsound = this.sound.add('backsound', { loop: true })
-        // backsound.play();
+        const backsound = this.sound.add('backsound', { loop: true })
+        backsound.play();
 
         // Untuk mengambil nilai tengah x dan y
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2
