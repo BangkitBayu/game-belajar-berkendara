@@ -1,19 +1,18 @@
 import Phaser from "phaser";
-import WelcomeScene from "../../scenes/WelcomeScene";
-import LevelsScene from "../../scenes/LevelsScene";
+import WelcomeScene from "../scenes/WelcomeScene";
+import LevelsScene from "../scenes/LevelsScene";
+
 
 /** @type {Phaser.Types.Core.GameConfig} */
-const gameConfig = {
+const phaserConfig = {
     type: Phaser.AUTO,
     pixelArt: true,
     backgroundColor: "#f5f5f5",
 
     parent: 'game-container',
 
-    // width: Math.ceil(window.innerWidth / 64),
-    // height: Math.ceil(window.innerHeight / 64),
-    width: Math.ceil(window.innerWidth / 64),
-    height: Math.ceil(window.innerHeight / 64),
+    width: window.innerWidth,
+    height: window.innerHeight,
 
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -34,4 +33,4 @@ const gameConfig = {
     scene: [WelcomeScene, LevelsScene]
 }
 
-export default gameConfig
+export default phaserConfig
