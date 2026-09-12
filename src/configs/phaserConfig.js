@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import WelcomeScene from "../scenes/WelcomeScene";
 import LevelsScene from "../scenes/LevelsScene";
+import VehicleScene from "../scenes/VehicleScene";
 
 
 /** @type {Phaser.Types.Core.GameConfig} */
@@ -30,7 +31,7 @@ const phaserConfig = {
     },
 
     // Urutan scene game
-    scene: [WelcomeScene, LevelsScene]
+    scene: [VehicleScene]
 }
 
 export default phaserConfig
