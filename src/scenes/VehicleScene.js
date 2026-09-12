@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { TEXT_STYLES } from '../configs/fonts';
+import { LOWER_CASE, TEXT_STYLES } from '../configs/fonts';
 
 export default class VehicleScene extends Phaser.Scene {
     constructor() {
@@ -13,7 +13,7 @@ export default class VehicleScene extends Phaser.Scene {
         // Sound asset
         this.load.audio('backsound', '/src/assets/sound/backsound.mp3');
         this.load.audio('click', '/src/assets/sound/click.mp3');
-        
+
         // Vehicle asset
         this.load.image('Mobil', '/src/assets/pilih_kendaraan/Mobil.png');
         this.load.image('Motor', '/src/assets/pilih_kendaraan/Motor.png');
@@ -43,7 +43,7 @@ export default class VehicleScene extends Phaser.Scene {
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
-        const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.title).setOrigin(0.5);
+const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.title).setOrigin(0.5);
 
         // kotak
         const boxWidth = 225;
@@ -79,6 +79,10 @@ export default class VehicleScene extends Phaser.Scene {
 
         // kotak di half kiri
         graphics.fillRoundedRect(leftHalfCenterX - boxWidth / 2, screenCenterY - boxHeight / 2, boxWidth, boxHeight, 5);
+        const gambarMobil = this.add.image(leftHalfCenterX, screenCenterY, 'Mobil');
+        gambarMobil.setDisplaySize(200, 200);
+        const vehicleNameCar = this.add.text(leftHalfCenterX, screenCenterY + 100, 'Mobil', LOWER_CASE.title).setOrigin(0.5);
+
 
         // kotak di half kanan
         graphics.fillRoundedRect(
@@ -88,6 +92,10 @@ export default class VehicleScene extends Phaser.Scene {
             boxHeight,
             5
         );
+
+        const gambarMotor = this.add.image(rightHalfCenterX, screenCenterY, 'Motor');
+        gambarMotor.setDisplaySize(200, 200);
+        const vehicleNameMotor = this.add.text(rightHalfCenterX, screenCenterY + 100, 'Motor', LOWER_CASE.title).setOrigin(0.5);
 
         // tombol back segitiga
         const size = 70;

@@ -15,3 +15,19 @@ export const TEXT_STYLES = {
         color: '#ffffff'
     }
 }
+
+export const LOWER_CASE = {
+    title: {
+        fontFamily: FONT_FAMILY,
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: '#FFB133'
+    },
+
+    description: {
+        fontFamily: 'Pixelify Sans',
+        fontSize: '26px',
+        fontStyle: 'normal',
+        color: '#ffffff'
+    }
+}
