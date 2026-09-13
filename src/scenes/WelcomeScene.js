@@ -1,7 +1,7 @@
-import Phaser from "phaser";
+import BaseScene from './BaseScene';
 import { TEXT_STYLES } from "../configs/fonts";
 
-export default class WelcomeScene extends Phaser.Scene {
+export default class WelcomeScene extends BaseScene {
     constructor() {
         super({ key: "WelcomeScene" })
     }
@@ -15,6 +15,7 @@ export default class WelcomeScene extends Phaser.Scene {
     }
 
     create() {
+        super.create();
         // Jarak antar elemen
         let gap = 20
 

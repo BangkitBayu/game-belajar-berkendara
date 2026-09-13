@@ -1,12 +1,13 @@
-import Phaser from 'phaser';
+import BaseScene from './BaseScene';
 import { LOWER_CASE, TEXT_STYLES } from '../configs/fonts';
 
-export default class VehicleScene extends Phaser.Scene {
+export default class VehicleScene extends BaseScene {
     constructor() {
         super({ key: 'VehicleScene' });
     }
 
     create() {
+        super.create();
         let gap = 20;
 
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
