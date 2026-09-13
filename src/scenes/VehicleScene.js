@@ -6,19 +6,6 @@ export default class VehicleScene extends Phaser.Scene {
         super({ key: 'VehicleScene' });
     }
 
-    preload() {
-        // Image asset
-        this.load.image('background', '/src/assets/background.png');
-
-        // Sound asset
-        this.load.audio('backsound', '/src/assets/sound/backsound.mp3');
-        this.load.audio('click', '/src/assets/sound/click.mp3');
-
-        // Vehicle asset
-        this.load.image('Mobil', '/src/assets/pilih_kendaraan/Mobil.png');
-        this.load.image('Motor', '/src/assets/pilih_kendaraan/Motor.png');
-    }
-
     create() {
         let gap = 20;
 
@@ -26,48 +13,43 @@ export default class VehicleScene extends Phaser.Scene {
         background.setDisplaySize(this.scale.width, this.scale.height);
         background.setDepth(-1);
 
-        // musik — guard biar gak crash kalau gagal load
-        if (this.cache.audio.exists('backsound')) {
-            const backsound = this.sound.add('backsound', { loop: true });
-            backsound.play();
-        } else {
-            console.warn('backsound belum keload, cek Network tab / path file');
-        }
-
-        let clickSfx = null;
-        if (this.cache.audio.exists('click')) {
-            clickSfx = this.sound.add('click');
-        }
-
-        // Untuk mengambil nilai tengah x dan y
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
         const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
 
-const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.title).setOrigin(0.5);
+        const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.title).setOrigin(0.5);
+
+        this.registry.set('vehicle', { mobil: false, motor: false });
+
+        const pilihKendaraan = (nama) => {
+            this.registry.set('vehicle', { mobil: nama === 'mobil', motor: nama === 'motor' });
+            this.sound.play('sfxClick');
+            this.scene.start('LevelsScene');
+        };
 
         // kotak
         const boxWidth = 225;
         const boxHeight = 225;
         const offset = 5;
+        const gapOffset = 50; // geser box ke tengah
 
         const leftHalfCenterX = screenCenterX / 2;
         const rightHalfCenterX = screenCenterX * 1.5;
 
         const shadowsBox = this.add.graphics();
-
         shadowsBox.fillStyle(0x000000, 0.3);
 
-        // shadow box
+        // shadow kiri
         shadowsBox.fillRoundedRect(
-            leftHalfCenterX - boxWidth / 2 + offset,
+            leftHalfCenterX - boxWidth / 2 + gapOffset + offset,
             screenCenterY - boxHeight / 2 + offset,
             boxWidth,
             boxHeight,
             5
         );
 
+        // shadow kanan
         shadowsBox.fillRoundedRect(
-            rightHalfCenterX - boxWidth / 2 + offset,
+            rightHalfCenterX - boxWidth / 2 - gapOffset + offset,
             screenCenterY - boxHeight / 2 + offset,
             boxWidth,
             boxHeight,
@@ -78,29 +60,40 @@ const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.t
         graphics.fillStyle(0xd3d3d3, 1);
 
         // kotak di half kiri
-        graphics.fillRoundedRect(leftHalfCenterX - boxWidth / 2, screenCenterY - boxHeight / 2, boxWidth, boxHeight, 5);
-        const gambarMobil = this.add.image(leftHalfCenterX, screenCenterY, 'Mobil');
-        gambarMobil.setDisplaySize(200, 200);
-        const vehicleNameCar = this.add.text(leftHalfCenterX, screenCenterY + 100, 'Mobil', LOWER_CASE.title).setOrigin(0.5);
-
-
-        // kotak di half kanan
         graphics.fillRoundedRect(
-            rightHalfCenterX - boxWidth / 2,
+            leftHalfCenterX - boxWidth / 2 + gapOffset,
             screenCenterY - boxHeight / 2,
             boxWidth,
             boxHeight,
             5
         );
+        const gambarMobil = this.add.image(leftHalfCenterX + gapOffset, screenCenterY, 'Mobil');
+        gambarMobil.setDisplaySize(200, 200);
+        gambarMobil.setInteractive({ useHandCursor: true });
+        gambarMobil.on('pointerdown', () => pilihKendaraan('mobil'));
+        const vehicleNameCar = this.add
+            .text(leftHalfCenterX + gapOffset, screenCenterY + 100, 'Mobil', LOWER_CASE.title)
+            .setOrigin(0.5);
 
-        const gambarMotor = this.add.image(rightHalfCenterX, screenCenterY, 'Motor');
+        // kotak di half kanan
+        graphics.fillRoundedRect(
+            rightHalfCenterX - boxWidth / 2 - gapOffset,
+            screenCenterY - boxHeight / 2,
+            boxWidth,
+            boxHeight,
+            5
+        );
+        const gambarMotor = this.add.image(rightHalfCenterX - gapOffset, screenCenterY, 'Motor');
         gambarMotor.setDisplaySize(200, 200);
-        const vehicleNameMotor = this.add.text(rightHalfCenterX, screenCenterY + 100, 'Motor', LOWER_CASE.title).setOrigin(0.5);
+        gambarMotor.setInteractive({ useHandCursor: true });
+        gambarMotor.on('pointerdown', () => pilihKendaraan('motor'));
+        const vehicleNameMotor = this.add
+            .text(rightHalfCenterX - gapOffset, screenCenterY + 100, 'Motor', LOWER_CASE.title)
+            .setOrigin(0.5);
 
         // tombol back segitiga
         const size = 70;
 
-        // shadow dulu
         const triangleShadow = this.add.triangle(
             50 + offset,
             this.cameras.main.worldView.y + this.cameras.main.height - 80 + offset,
@@ -129,7 +122,7 @@ const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.t
 
         triangle.setInteractive({ useHandCursor: true });
         triangle.on('pointerdown', () => {
-            if (clickSfx) clickSfx.play();
+            this.sound.play('sfxClick');
             this.scene.start('WelcomeScene');
         });
     }

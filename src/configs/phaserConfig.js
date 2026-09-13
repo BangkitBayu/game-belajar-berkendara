@@ -20,9 +20,7 @@ const phaserConfig = {
     scale: {
         autoCenter: Phaser.Scale.CENTER_BOTH,
         mode: Phaser.Scale.RESIZE,
-
     },
-
 
     physics: {
         default: "arcade",
@@ -32,8 +30,7 @@ const phaserConfig = {
         }
     },
 
-    // Urutan scene game
-    scene: [BootScene, PreloadScene, MusicScene, WelcomeScene,VehicleScene, LevelsScene]
+    scene: [BootScene, PreloadScene, MusicScene, WelcomeScene, VehicleScene, LevelsScene]
 }
 
 export default phaserConfig

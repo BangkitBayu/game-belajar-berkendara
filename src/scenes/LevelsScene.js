@@ -1,28 +1,16 @@
 import Phaser from 'phaser';
 
+const LEVELS_DATA = {
+    1: { iconKey: 'level1', objective: 'ini level 1', mainLabel: 'main' },
+    2: { iconKey: 'level2', objective: 'ini level 2', mainLabel: 'main' },
+    3: { iconKey: 'level3', objective: 'ini level 3', mainLabel: 'main' },
+    4: { iconKey: 'level4', objective: 'ini level 4', mainLabel: 'main' },
+    5: { iconKey: 'level5', objective: 'ini level 5', mainLabel: 'main' },
+};
+
 export default class LevelsScene extends Phaser.Scene {
     constructor() {
         super({ key: 'LevelsScene' });
-    }
-
-    preload() {
-        this.load.on('loaderror', (file) => {
-            console.log('GAGAL LOAD:', file.key, file.src);
-        });
-
-        // background asset
-        this.load.image('background', '/src/assets/background.png');
-
-        // sound asset
-        this.load.audio('backsound', '/src/assets/sound/backsound.mp3');
-        this.load.audio('click', '/src/assets/sound/click.mp3');
-
-        // level asset
-        this.load.image('level1', '/src/assets/levels/1.png');
-        this.load.image('level2', '/src/assets/levels/2.png');
-        this.load.image('level3', '/src/assets/levels/3.png');
-        this.load.image('level4', '/src/assets/levels/4.png');
-        this.load.image('level5', '/src/assets/levels/5.png');
     }
 
     create() {
@@ -32,21 +20,6 @@ export default class LevelsScene extends Phaser.Scene {
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
         background.setDisplaySize(this.scale.width, this.scale.height);
         background.setDepth(-1);
-
-        // musik
-        if (this.cache.audio.exists('backsound')) {
-            const backsound = this.sound.add('backsound', { loop: true });
-            backsound.play();
-        } else {
-            console.warn('backsound belum keload, cek Network tab / path file');
-        }
-
-        const clickSfx = this.sound.add('click');
-        triangle.setInteractive({ useHandCursor: true });
-        triangle.on('pointerdown', () => {
-            clickSfx.play();
-            this.scene.start('WelcomeScene');
-        });
 
         // titik tengah
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
@@ -58,14 +31,14 @@ export default class LevelsScene extends Phaser.Scene {
 
         const offset = 5;
 
-        // shadow rail
+        // shadow line
         graphics.fillStyle(0x000000, 0.3);
         graphics.fillRoundedRect(screenCenterX - 450 + offset, screenCenterY + offset, 225, 10, 5);
         graphics.fillRoundedRect(screenCenterX - 225 + offset, screenCenterY + offset, 225, 10, 5);
         graphics.fillRoundedRect(screenCenterX + offset, screenCenterY + offset, 225, 10, 5);
         graphics.fillRoundedRect(screenCenterX + 225 + offset, screenCenterY + offset, 225, 10, 5);
 
-        // rail asli (warna abu terang, di atas shadow)
+        // line asli
         graphics.fillStyle(0xd3d3d3, 1);
         graphics.fillRoundedRect(screenCenterX - 450, screenCenterY, 225, 10, 5);
         graphics.fillRoundedRect(screenCenterX - 225, screenCenterY, 225, 10, 5);
@@ -104,6 +77,22 @@ export default class LevelsScene extends Phaser.Scene {
         const level5Icon = this.add.image(screenCenterX + 450, screenCenterY, 'level5');
         level5Icon.setDisplaySize(100, 100);
 
+        const levelPositions = [
+            { circle: level1, x: screenCenterX - 450, num: 1 },
+            { circle: level2, x: screenCenterX - 225, num: 2 },
+            { circle: level3, x: screenCenterX, num: 3 },
+            { circle: level4, x: screenCenterX + 225, num: 4 },
+            { circle: level5, x: screenCenterX + 450, num: 5 },
+        ];
+
+        levelPositions.forEach(({ circle, x, num }) => {
+            circle.setInteractive({ useHandCursor: true });
+            circle.on('pointerdown', () => {
+                this.sound.play('sfxClick');
+                this.toggleLevelMenu(x, screenCenterY, num);
+            });
+        });
+
         //tombol back bentuk segitiga
         const size = 70;
 
@@ -136,9 +125,91 @@ export default class LevelsScene extends Phaser.Scene {
 
         triangle.setInteractive({ useHandCursor: true });
         triangle.on('pointerdown', () => {
+            this.sound.play('sfxClick');
             this.scene.start('WelcomeScene');
         });
     }
 
+    toggleLevelMenu(x, y, levelNumber) {
+        if (this.activeLevelMenu) {
+            const wasSameLevel = this.activeLevelMenu.levelNumber === levelNumber;
+            this.activeLevelMenu.destroy();
+            this.activeLevelMenu = null;
+            if (wasSameLevel) return;
+        }
+        this.activeLevelMenu = this.showLevelMenu(x, y, levelNumber);
+    }
+
+    showLevelMenu(x, y, levelNumber) {
+    const data = LEVELS_DATA[levelNumber];
+
+    const container = this.add.container(x, y - 180);
+    container.levelNumber = levelNumber;
+
+    // ukuran tabel
+    const colKendaraanWidth = 70;
+    const colObjektifWidth = 100;
+    const rowHeight = 70;
+    const tableWidth = colKendaraanWidth + colObjektifWidth;
+
+    // border luar tabel
+    const tableBorder = this.add.rectangle(0, 0, tableWidth, rowHeight, 0xffffff)
+        .setStrokeStyle(3, 0x000000);
+
+    // garis pemisah kolom
+    const divider = this.add.rectangle(-tableWidth / 2 + colKendaraanWidth, 0, 3, rowHeight, 0x000000);
+
+    // kolom kiri: icon kendaraan
+    const kendaraanIcon = this.add.image(-tableWidth / 2 + colKendaraanWidth / 2, 0, data.iconKey)
+        .setDisplaySize(45, 45);
+
+    // kolom kanan: teks objektif
+    const objektifText = this.add.text(
+        -tableWidth / 2 + colKendaraanWidth + colObjektifWidth / 2,
+        0,
+        data.objective,
+        { fontSize: '12px', color: '#000000', align: 'center', wordWrap: { width: colObjektifWidth - 10 } }
+    ).setOrigin(0.5);
+
+    // tombol Main: kotak, sudut kanan-bawah dipotong
+    const mainBtnSize = 60;
+    const cut = 20;
+    const mainBtnX = tableWidth / 2 - mainBtnSize / 2 + 10;
+    const mainBtnY = rowHeight / 2 + mainBtnSize / 2 + 20;
+
+    const mainBtn = this.add.polygon(
+        mainBtnX,
+        mainBtnY,
+        [
+            -mainBtnSize / 2, -mainBtnSize / 2,
+            mainBtnSize / 2, -mainBtnSize / 2,
+            mainBtnSize / 2, mainBtnSize / 2 - cut,
+            mainBtnSize / 2 - cut, mainBtnSize / 2,
+            -mainBtnSize / 2, mainBtnSize / 2,
+        ],
+        0xffffff
+    ).setStrokeStyle(3, 0x000000);
+
+    const mainText = this.add.text(mainBtnX, mainBtnY, 'Main', { fontSize: '12px', color: '#000000' }).setOrigin(0.5);
+
+    mainBtn.setInteractive({ useHandCursor: true });
+    mainBtn.on('pointerdown', () => {
+        this.sound.play('sfxClick');
+        // TODO: mulai level di sini
+    });
+
+    container.add([tableBorder, divider, kendaraanIcon, objektifText, mainBtn, mainText]);
+    container.setScale(0);
+
+    this.tweens.add({
+        targets: container,
+        scale: 1,
+        duration: 200,
+        ease: 'Back.Out',
+    });
+
+    return container;
+}
+ 
     update() {}
 }

@@ -6,15 +6,17 @@ export default class MusicScene extends Phaser.Scene {
     }
 
     create() {
-        this.bgm = this.sound.add('bgm', { loop: true })
-
-        this.bgm.play()
-
+        if (this.cache.audio.exists('bgm')) {
+            this.bgm = this.sound.add('bgm', { loop: true })
+            this.bgm.play()
+        } else {
+            console.warn('bgm gagal keload, cek Network tab / path file')
+        }
     }
 
     toggleMuted() {
+        if (!this.bgm) return false
         this.bgm.mute = !this.bgm.mute
-
         return this.bgm.mute
     }
 }
