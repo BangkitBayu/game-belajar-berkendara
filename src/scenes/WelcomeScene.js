@@ -1,5 +1,6 @@
 import BaseScene from './BaseScene';
 import { TEXT_STYLES } from "../configs/fonts";
+import StorageManager from '../StorageManager';
 
 export default class WelcomeScene extends BaseScene {
     constructor() {
@@ -19,15 +20,16 @@ export default class WelcomeScene extends BaseScene {
         // Jarak antar elemen
         let gap = 20
 
+        let isMuted = StorageManager.show('isSoundOn')
+
         // Ambil bgm music
-        const musicScene = this.scene.get('MusicScene')
 
         // Untuk memasukkan background
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0)
         background.setDisplaySize(this.scale.width, this.scale.height)
-        background.setDepth(-1)
 
-        const soundBtn = this.add.image(this.scale.width - 20, 10, 'iconSoundOn').setScale(0.4).setOrigin(1, 0).setInteractive({ useHandCursor: true })
+        background.setDepth(-1)
+        const soundBtn = this.add.image(this.scale.width - 20, 10, isMuted ? 'iconSoundOn' : 'iconSoundOff').setScale(0.4).setOrigin(1, 0).setInteractive({ useHandCursor: true })
 
         // Untuk mengambil nilai tengah x dan y
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2
@@ -45,8 +47,8 @@ export default class WelcomeScene extends BaseScene {
 
         soundBtn.on('pointerdown', (pointer, localX, localY, event) => {
             event.stopPropagation()
-            const isMuted = musicScene.toggleMuted()
-
+            const musicScene = this.scene.get('MusicScene')
+            isMuted = musicScene.toggleMuted()
             soundBtn.setTexture(isMuted ? 'iconSoundOn' : 'iconSoundOff')
         })
 

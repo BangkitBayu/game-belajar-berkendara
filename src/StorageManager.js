@@ -136,7 +136,7 @@ export default new class StorageManager {
 
     set(key, value) {
         this._data[key] = value
-        this._save
+        this._save()
     }
 
     update(partialData) {
