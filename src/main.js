@@ -1,8 +1,10 @@
 import Phaser from "phaser";
 import phaserConfig from "./configs/phaserConfig";
 import { FONT_FAMILY } from "./configs/fonts";
+import StorageManager from "./StorageManager";
 
 try {
+    StorageManager.init()
     document.fonts.load(`64px ${FONT_FAMILY}`).then(() => {
         new Phaser.Game(phaserConfig)
     })
