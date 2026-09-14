@@ -127,7 +127,7 @@ export default class LevelsScene extends BaseScene {
         triangle.setInteractive({ useHandCursor: true });
         triangle.on('pointerdown', () => {
             this.sound.play('sfxClick');
-            this.scene.start('WelcomeScene');
+            this.scene.start('VehicleScene');
         });
     }
 
@@ -148,19 +148,23 @@ export default class LevelsScene extends BaseScene {
         container.levelNumber = levelNumber;
 
         const circleRadius = 75;
-        const level1X = -450; // posisi lokal, relatif ke container (== screenCenterX)
+        const level1X = -450;
         const level3X = 0;
         const level5X = 450;
 
-        const rowHeight = 70;
-        const squareSize = 70;
+        const rowHeight = 140;
+        const squareSize = 140;
         const gap = 20;
 
-        // kotak icon, di atas lingkaran level 1
-        const square = this.add.rectangle(level1X, 0, squareSize, rowHeight, 0xffffff).setStrokeStyle(3, 0x000000);
-        const squareIcon = this.add.image(level1X, 0, data.iconKey).setDisplaySize(45, 45);
+        // pilih icon kendaraan sesuai pilihan user di VehicleScene
+        const vehicle = this.registry.get('vehicle');
+        const vehicleKey = vehicle && vehicle.motor ? 'motor' : 'mobil';
 
-        // persegi objektif: nempel kanan kotak icon, lurus sampe atas lingkaran level 5
+        // kotak icon
+        const square = this.add.rectangle(level1X, 0, squareSize, rowHeight, 0xffffff).setStrokeStyle(3, 0x000000);
+        const squareIcon = this.add.image(level1X, 0, vehicleKey).setDisplaySize(90, 90);
+
+        // persegi objektif
         const objLeftX = level1X + squareSize / 2;
         const objRightX = level5X + circleRadius;
         const objWidth = objRightX - objLeftX;
@@ -176,45 +180,43 @@ export default class LevelsScene extends BaseScene {
             })
             .setOrigin(0.5);
 
-        // tombol Main: di bawah lingkaran 3-4-5, sisi kanan rata sama objRect & lingkaran 5
-        const circleLocalY = 180; // posisi y lingkaran relatif container (container y = screenCenterY - 180)
+        // tombol Main (bentuk pedal gas: persegi, pojok kiri-bawah kepotong miring)
+        const circleLocalY = 180;
         const mainBtnHeight = 60;
         const cut = 20;
-        const gapFromCircle = 40; // jarak dari bawah lingkaran ke tombol Main
+        const gapFromCircle = 40;
 
-        const mainBtnLeftX = level3X - circleRadius; // rata sama sisi kiri lingkaran 3
-        const mainBtnRightX = objRightX; // sejajar sisi kanan objRect (== sisi kanan lingkaran 5)
-        const mainBtnWidth = mainBtnRightX - mainBtnLeftX;
-        const mainBtnLocalX = (mainBtnLeftX + mainBtnRightX) / 2;
-        const mainBtnLocalY = circleLocalY + circleRadius + gapFromCircle + mainBtnHeight / 2;
+        const mainBtnTop = circleLocalY + circleRadius + gapFromCircle;
+        const mainBtnBottom = mainBtnTop + mainBtnHeight;
+        const mainBtnLeftX = level3X - circleRadius;
+        const mainBtnRightX = objRightX; // presisi, sama persis sisi kanan objRect
 
         const mainBtn = this.add
             .polygon(
-                mainBtnLocalX,
-                mainBtnLocalY,
+                0,
+                0,
                 [
-                    -mainBtnWidth / 2,
-                    -mainBtnHeight / 2,
-                    mainBtnWidth / 2,
-                    -mainBtnHeight / 2,
-                    mainBtnWidth / 2,
-                    mainBtnHeight / 2,
-                    -mainBtnWidth / 2 + cut,
-                    mainBtnHeight / 2,
-                    -mainBtnWidth / 2,
-                    mainBtnHeight / 2 - cut
+                    mainBtnLeftX, mainBtnTop, // kiri-atas
+                    mainBtnRightX, mainBtnTop, // kanan-atas   ← sejajar sisi kanan objRect
+                    mainBtnRightX, mainBtnBottom, // kanan-bawah ← sejajar sisi kanan objRect
+                    mainBtnLeftX + cut, mainBtnBottom, // potongan bawah
+                    mainBtnLeftX, mainBtnBottom - cut // potongan kiri
                 ],
                 0xffffff
             )
+            .setOrigin(0, 0)
             .setStrokeStyle(3, 0x000000);
 
-        const mainText = this.add.text(mainBtnLocalX, mainBtnLocalY, 'Main', { fontSize: '16px', color: '#000000' }).setOrigin(0.5);
+        const mainBtnCenterX = (mainBtnLeftX + mainBtnRightX) / 2;
+        const mainBtnCenterY = (mainBtnTop + mainBtnBottom) / 2;
+        const mainText = this.add
+            .text(mainBtnCenterX, mainBtnCenterY, 'Main', { fontSize: '16px', color: '#000000' })
+            .setOrigin(0.5);
 
         mainBtn.setInteractive({ useHandCursor: true });
         mainBtn.on('pointerdown', () => {
             this.sound.play('sfxClick');
         });
-
 
         container.add([square, squareIcon, objRect, objText, mainBtn, mainText]);
         container.setScale(0);

@@ -7,7 +7,6 @@ export default class PreloadScene extends Phaser.Scene {
 
     preload() {
     const { width, height } = this.scale;
-    const barBg = this.add.rectangle(width/2, height/2, 300, 20, 0x333333);
     const bar = this.add.rectangle(width/2 - 150, height/2, 0, 20, 0xffffff).setOrigin(0, 0.5);
 
     this.load.on('progress', (value) => {
@@ -19,8 +18,12 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.audio('sfxClick', '/src/assets/sound/click.mp3');
 
     // pindahan dari VehicleScene
-    this.load.image('Mobil', '/src/assets/pilih_kendaraan/Mobil.png');
-    this.load.image('Motor', '/src/assets/pilih_kendaraan/Motor.png');
+    this.load.image('pilih_mobil', '/src/assets/pilih_kendaraan/pilih_mobil.png');
+    this.load.image('pilih_motor', '/src/assets/pilih_kendaraan/pilih_motor.png');
+
+    // aset Kendaraan
+    this.load.image('mobil', '/src/assets/kendaraan/car-red-top.png');
+    this.load.image('motor', '/src/assets/kendaraan/motor-top-without-helm.png');
 
     // pindahan dari LevelsScene
     this.load.image('level1', '/src/assets/levels/1.png');
@@ -28,9 +31,11 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('level3', '/src/assets/levels/3.png');
     this.load.image('level4', '/src/assets/levels/4.png');
     this.load.image('level5', '/src/assets/levels/5.png');
+    
 }
 
     create() {
+        
         this.scene.launch('MusicScene');
         this.scene.start('WelcomeScene');
 

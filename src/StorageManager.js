@@ -1,5 +1,5 @@
 // Key storage
-const STORAGE_KEY = "belajar-berkendara:player-data"
+const STORAGE_KEY = 'belajar-berkendara:player-data';
 
 function buildObjective(type, extra = {}) {
     switch (type) {
@@ -33,8 +33,8 @@ function buildObjective(type, extra = {}) {
 
 // DATA AWAL
 const DEFAULT_DATA = {
-    isSoundOn: true,  //Boolean
-    selectedVehicle: null,  // Car || Motorcyle
+    isSoundOn: true, //Boolean
+    selectedVehicle: null, // Car || Motorcyle
     levels: {
         1: {
             unlocked: false,
@@ -105,49 +105,48 @@ const DEFAULT_DATA = {
             }
         }
     }
-}
+};
 
-export default new class StorageManager {
+export default new (class StorageManager {
     constructor() {
         // PRIVATE FIELD
-        this._data = null
+        this._data = null;
     }
 
     // Untuk menginisialisasi storage
     init() {
-        const data = JSON.parse(localStorage.getItem(STORAGE_KEY))
+        const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
         if (data) {
-            this._data = data
+            this._data = data;
         } else {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA))
+            this._data = DEFAULT_DATA;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_DATA));
         }
 
-        return this._data
+        return this._data;
     }
 
     show(key) {
-        return this._data[key]
+        return this._data[key];
     }
 
     index() {
-        return this._data
+        return this._data;
     }
 
     set(key, value) {
-        this._data[key] = value
-        this._save()
+        this._data[key] = value;
+        this._save();
     }
 
     update(partialData) {
-        this._data = { ...this._data, ...partialData }
-        this._save
+        this._data = { ...this._data, ...partialData };
+        this._save();
     }
 
     _save() {
-        console.log(this._data)
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data))
+        console.log(this._data);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this._data));
     }
-}
-
-
+})();

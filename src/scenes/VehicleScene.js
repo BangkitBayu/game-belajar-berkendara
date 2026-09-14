@@ -5,7 +5,7 @@ export default class VehicleScene extends BaseScene {
     constructor() {
         super({ key: 'VehicleScene' });
     }
-
+ 
     create() {
         super.create();
         let gap = 20;
@@ -68,7 +68,7 @@ export default class VehicleScene extends BaseScene {
             boxHeight,
             5
         );
-        const gambarMobil = this.add.image(leftHalfCenterX + gapOffset, screenCenterY, 'Mobil');
+        const gambarMobil = this.add.image(leftHalfCenterX + gapOffset, screenCenterY, 'pilih_mobil');
         gambarMobil.setDisplaySize(200, 200);
         gambarMobil.setInteractive({ useHandCursor: true });
         gambarMobil.on('pointerdown', () => pilihKendaraan('mobil'));
@@ -84,7 +84,7 @@ export default class VehicleScene extends BaseScene {
             boxHeight,
             5
         );
-        const gambarMotor = this.add.image(rightHalfCenterX - gapOffset, screenCenterY, 'Motor');
+        const gambarMotor = this.add.image(rightHalfCenterX - gapOffset, screenCenterY, 'pilih_motor');
         gambarMotor.setDisplaySize(200, 200);
         gambarMotor.setInteractive({ useHandCursor: true });
         gambarMotor.on('pointerdown', () => pilihKendaraan('motor'));
