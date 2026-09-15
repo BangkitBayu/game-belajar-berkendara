@@ -1,11 +1,11 @@
 import BaseScene from './BaseScene';
 
 const LEVELS_DATA = {
-    1: { iconKey: 'level1', objective: 'ini level 1', mainLabel: 'main' },
-    2: { iconKey: 'level2', objective: 'ini level 2', mainLabel: 'main' },
-    3: { iconKey: 'level3', objective: 'ini level 3', mainLabel: 'main' },
-    4: { iconKey: 'level4', objective: 'ini level 4', mainLabel: 'main' },
-    5: { iconKey: 'level5', objective: 'ini level 5', mainLabel: 'main' }
+    1: { iconKey: 'level1', objective: '1. Menggunakan helm (double click layar)\n2. Berkendara sesuai batas kecepatan\n3. Menggunakan klakson / bell', mainLabel: 'main' },
+    2: { iconKey: 'level2', objective: '1. Menyalip 2 kendaraan dengan sein\n2. Mematuhi traffic light & rambu lalu lintas', mainLabel: 'main' },
+    3: { iconKey: 'level3', objective: '1. Jaga jarak dengan kendaraan di depan (10 detik)\n2. Memberi jalan ke pejalan kaki di zebra cross', mainLabel: 'main' },
+    4: { iconKey: 'level4', objective: '1. Beri jalan untuk ambulan\n2. Beri jalan untuk 3 pejalan kaki\n3. Berkendara hingga 500 meter', mainLabel: 'main' },
+    5: { iconKey: 'level5', objective: '1. Berkendara hingga 1000 meter\n2. Hindari genangan air\n3. Patuhi semua rambu', mainLabel: 'main' }
 };
 
 export default class LevelsScene extends BaseScene {
@@ -215,8 +215,13 @@ export default class LevelsScene extends BaseScene {
 
         mainBtn.setInteractive({ useHandCursor: true });
         mainBtn.on('pointerdown', () => {
-            alert("halo")
             this.sound.play('sfxClick');
+            const targetScene = `Level${levelNumber}Scene`;
+            if (this.scene.get(targetScene)) {
+                this.scene.start(targetScene);
+            } else {
+                alert(`Level ${levelNumber} belum tersedia`);
+            }
         });
 
         container.add([square, squareIcon, objRect, objText, mainBtn, mainText]);

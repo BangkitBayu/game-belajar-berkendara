@@ -7,6 +7,8 @@ import PreloadScene from "../scenes/PreloadScene";
 import MusicScene from "../scenes/MusicScene";
 import Level1Scene from "../scenes/Levels/Level1Scene";
 
+import Level3Scene from "../scenes/Levels/Level3Scene";
+
 /** @type {Phaser.Types.Core.GameConfig} */
 const phaserConfig = {
     type: Phaser.AUTO,
@@ -31,8 +33,9 @@ const phaserConfig = {
         }
     },
 
-    // scene: [BootScene, PreloadScene, MusicScene, WelcomeScene, VehicleScene, LevelsScene]
-    scene: [Level1Scene]
+    // Bisa langsung tes Level3Scene atau main lewat alur game lengkap:
+    // scene: [Level3Scene]
+    scene: [BootScene, PreloadScene, MusicScene, WelcomeScene, VehicleScene, LevelsScene, Level1Scene, Level3Scene]
 }
 
 export default phaserConfig
