@@ -1,10 +1,22 @@
 import BaseScene from './BaseScene';
 
 const LEVELS_DATA = {
-    1: { iconKey: 'level1', objective: '1. Menggunakan helm (double click layar)\n2. Berkendara sesuai batas kecepatan\n3. Menggunakan klakson / bell', mainLabel: 'main' },
+    1: {
+        iconKey: 'level1',
+        objective: '1. Menggunakan helm (double click layar)\n2. Berkendara sesuai batas kecepatan\n3. Menggunakan klakson / bell',
+        mainLabel: 'main'
+    },
     2: { iconKey: 'level2', objective: '1. Menyalip 2 kendaraan dengan sein\n2. Mematuhi traffic light & rambu lalu lintas', mainLabel: 'main' },
-    3: { iconKey: 'level3', objective: '1. Jaga jarak dengan kendaraan di depan (10 detik)\n2. Memberi jalan ke pejalan kaki di zebra cross', mainLabel: 'main' },
-    4: { iconKey: 'level4', objective: '1. Beri jalan untuk ambulan\n2. Beri jalan untuk 3 pejalan kaki\n3. Berkendara hingga 500 meter', mainLabel: 'main' },
+    3: {
+        iconKey: 'level3',
+        objective: '1. Jaga jarak dengan kendaraan di depan (10 detik)\n2. Memberi jalan ke pejalan kaki di zebra cross',
+        mainLabel: 'main'
+    },
+    4: {
+        iconKey: 'level4',
+        objective: '1. Beri jalan untuk ambulan\n2. Beri jalan untuk 3 pejalan kaki\n3. Berkendara hingga 500 meter',
+        mainLabel: 'main'
+    },
     5: { iconKey: 'level5', objective: '1. Berkendara hingga 1000 meter\n2. Hindari genangan air\n3. Patuhi semua rambu', mainLabel: 'main' }
 };
 
@@ -196,11 +208,16 @@ export default class LevelsScene extends BaseScene {
                 0,
                 0,
                 [
-                    mainBtnLeftX, mainBtnTop, // kiri-atas
-                    mainBtnRightX, mainBtnTop, // kanan-atas   ← sejajar sisi kanan objRect
-                    mainBtnRightX, mainBtnBottom, // kanan-bawah ← sejajar sisi kanan objRect
-                    mainBtnLeftX + cut, mainBtnBottom, // potongan bawah
-                    mainBtnLeftX, mainBtnBottom - cut // potongan kiri
+                    mainBtnLeftX,
+                    mainBtnTop, // kiri-atas
+                    mainBtnRightX,
+                    mainBtnTop, // kanan-atas   ← sejajar sisi kanan objRect
+                    mainBtnRightX,
+                    mainBtnBottom, // kanan-bawah ← sejajar sisi kanan objRect
+                    mainBtnLeftX + cut,
+                    mainBtnBottom, // potongan bawah
+                    mainBtnLeftX,
+                    mainBtnBottom - cut // potongan kiri
                 ],
                 0xffffff
             )
@@ -209,9 +226,7 @@ export default class LevelsScene extends BaseScene {
 
         const mainBtnCenterX = (mainBtnLeftX + mainBtnRightX) / 2;
         const mainBtnCenterY = (mainBtnTop + mainBtnBottom) / 2;
-        const mainText = this.add
-            .text(mainBtnCenterX, mainBtnCenterY, 'Main', { fontSize: '16px', color: '#000000' })
-            .setOrigin(0.5);
+        const mainText = this.add.text(mainBtnCenterX, mainBtnCenterY, 'Main', { fontSize: '16px', color: '#000000' }).setOrigin(0.5);
 
         mainBtn.setInteractive({ useHandCursor: true });
         mainBtn.on('pointerdown', () => {
