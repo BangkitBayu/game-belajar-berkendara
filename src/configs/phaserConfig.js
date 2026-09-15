@@ -6,7 +6,6 @@ import BootScene from "../scenes/BootScene";
 import PreloadScene from "../scenes/PreloadScene";
 import MusicScene from "../scenes/MusicScene";
 import Level1Scene from "../scenes/Levels/Level1Scene";
-
 import Level3Scene from "../scenes/Levels/Level3Scene";
 
 /** @type {Phaser.Types.Core.GameConfig} */
@@ -14,15 +13,11 @@ const phaserConfig = {
     type: Phaser.AUTO,
     pixelArt: true,
     backgroundColor: "#f5f5f5",
-
     parent: 'game-container',
 
-    width: window.innerWidth,
-    height: window.innerHeight,
-
     scale: {
+        mode: Phaser.Scale.RESIZE, // Canvas mengikuti penuh ukuran window
         autoCenter: Phaser.Scale.CENTER_BOTH,
-        mode: Phaser.Scale.RESIZE,
     },
 
     physics: {
@@ -33,9 +28,7 @@ const phaserConfig = {
         }
     },
 
-    // Bisa langsung tes Level3Scene atau main lewat alur game lengkap:
-    // scene: [Level3Scene]
     scene: [BootScene, PreloadScene, MusicScene, WelcomeScene, VehicleScene, LevelsScene, Level1Scene, Level3Scene]
 }
 
-export default phaserConfig
+export default phaserConfig;

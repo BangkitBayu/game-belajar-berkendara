@@ -1,45 +1,76 @@
-import Phaser from 'phaser';
+import BaseScene from './BaseScene';
+import { TEXT_STYLES } from "../configs/fonts";
+import StorageManager from '../StorageManager';
 
-export default class PreloadScene extends Phaser.Scene {
+export default class WelcomeScene extends BaseScene {
     constructor() {
-        super({ key: 'PreloadScene' });
+        super({ key: "WelcomeScene" })
     }
 
     preload() {
-    const { width, height } = this.scale;
-    const bar = this.add.rectangle(width/2 - 150, height/2, 0, 20, 0xffffff).setOrigin(0, 0.5);
-
-    this.load.on('progress', (value) => {
-        bar.width = 300 * value;
-    });
-    
-    this.load.image('background', '/src/assets/background.png');
-    this.load.audio('bgm', '/src/assets/sound/backsound.mp3');
-    this.load.audio('sfxClick', '/src/assets/sound/click.mp3');
-
-    // pindahan dari VehicleScene
-    this.load.image('pilih_mobil', '/src/assets/pilih_kendaraan/pilih_mobil.png');
-    this.load.image('pilih_motor', '/src/assets/pilih_kendaraan/pilih_motor.png');
-
-    // aset Kendaraan
-    this.load.image('mobil', '/src/assets/kendaraan/car-red-top.png');
-    this.load.image('motor', '/src/assets/kendaraan/motor-top-without-helm.png');
-
-    // pindahan dari LevelsScene
-    this.load.image('level1', '/src/assets/levels/1.png');
-    this.load.image('level2', '/src/assets/levels/2.png');
-    this.load.image('level3', '/src/assets/levels/3.png');
-    this.load.image('level4', '/src/assets/levels/4.png');
-    this.load.image('level5', '/src/assets/levels/5.png');
-    
-}
-
-    create() {
-        
-        this.scene.launch('MusicScene');
-        this.scene.start('WelcomeScene');
-
+        // Image asset
+        this.load.image('background', '/src/assets/background.png')
+        this.load.image('logo', '/src/assets/logo.png')
+        this.load.image('iconSoundOn', '/src/assets/sound-on.png')
+        this.load.image('iconSoundOff', '/src/assets/sound-off.png')
     }
 
-    update() {}
+    create() {
+        super.create();
+
+        let isMuted = StorageManager.show('isSoundOn')
+
+        const width = this.scale.width;
+        const height = this.scale.height;
+        const centerX = width / 2;
+
+        // 1. BACKGROUND: Stretch cuman ke kanan & kiri (tinggi terkunci mengikuti skala rasio asli)
+        const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
+        background.displayWidth = width;       // Penuhi lebar ke samping
+        background.scaleY = background.scaleX; // Cegah stretch/penyok ke atas-bawah
+        background.setDepth(-1);
+
+        // 2. SKALA ELEMEN UI (Proporsional berdasarkan layar)
+        const baseWidth = 1280;
+        const baseHeight = 720;
+        const scaleFactor = Math.min(width / baseWidth, height / baseHeight);
+
+        // 3. SOUND BUTTON
+        const soundBtn = this.add.image(width - (20 * scaleFactor), 20 * scaleFactor, isMuted ? 'iconSoundOn' : 'iconSoundOff')
+            .setScale(0.4 * scaleFactor)
+            .setOrigin(1, 0)
+            .setInteractive({ useHandCursor: true });
+
+        // 4. TITLE
+        const title = this.add.text(centerX, height * 0.25, 'Belajar Berkendara', TEXT_STYLES.title)
+            .setOrigin(0.5)
+            .setScale(scaleFactor);
+
+        // 5. LOGO
+        const logo = this.add.image(centerX, height * 0.50, 'logo')
+            .setOrigin(0.5)
+            .setScale(0.2 * scaleFactor);
+
+        // 6. DESCRIPTION
+        const description = this.add.text(centerX, height * 0.80, 'Klik area kosong untuk memulai permainan', TEXT_STYLES.description)
+            .setOrigin(0.5)
+            .setScale(scaleFactor);
+
+        // Events
+        soundBtn.on('pointerdown', (pointer, localX, localY, event) => {
+            event.stopPropagation()
+            const musicScene = this.scene.get('MusicScene')
+            isMuted = musicScene.toggleMuted()
+            soundBtn.setTexture(isMuted ? 'iconSoundOn' : 'iconSoundOff')
+        })
+
+        this.input.once('pointerdown', () => {
+            this.sound.play('sfxClick')
+            this.scene.start('VehicleScene')
+        })
+    }
+
+    update() {
+
+    }
 }

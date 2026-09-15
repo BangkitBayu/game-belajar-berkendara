@@ -5,19 +5,26 @@ export default class VehicleScene extends BaseScene {
     constructor() {
         super({ key: 'VehicleScene' });
     }
- 
+
     create() {
         super.create();
-        let gap = 20;
+
+        const width = this.scale.width;
+        const height = this.scale.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
 
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
-        background.setDisplaySize(this.scale.width, this.scale.height);
+        background.setDisplaySize(width, height);
         background.setDepth(-1);
 
-        const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
-        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+        const baseWidth = 1280;
+        const baseHeight = 720;
+        const scaleFactor = Math.max(0.5, Math.min(width / baseWidth, height / baseHeight));
 
-        const title = this.add.text(screenCenterX, 100, 'Pilih Kendaraan', TEXT_STYLES.title).setOrigin(0.5);
+        const title = this.add.text(centerX, height * 0.15, 'Pilih Kendaraan', TEXT_STYLES.title)
+            .setOrigin(0.5)
+            .setScale(scaleFactor);
 
         this.registry.set('vehicle', { mobil: false, motor: false });
 
@@ -27,101 +34,64 @@ export default class VehicleScene extends BaseScene {
             this.scene.start('LevelsScene');
         };
 
-        // kotak
-        const boxWidth = 225;
-        const boxHeight = 225;
-        const offset = 5;
-        const gapOffset = 50; // geser box ke tengah
+        const boxWidth = 225 * scaleFactor;
+        const boxHeight = 225 * scaleFactor;
+        const offset = 5 * scaleFactor;
+        const spacing = width * 0.2;
 
-        const leftHalfCenterX = screenCenterX / 2;
-        const rightHalfCenterX = screenCenterX * 1.5;
+        const createVehicleCard = (x, y, assetKey, labelText, vehicleType) => {
+            const container = this.add.container(x, y);
 
-        const shadowsBox = this.add.graphics();
-        shadowsBox.fillStyle(0x000000, 0.3);
+            const shadow = this.add.graphics();
+            shadow.fillStyle(0x000000, 0.3);
+            shadow.fillRoundedRect(-boxWidth / 2 + offset, -boxHeight / 2 + offset, boxWidth, boxHeight, 5 * scaleFactor);
 
-        // shadow kiri
-        shadowsBox.fillRoundedRect(
-            leftHalfCenterX - boxWidth / 2 + gapOffset + offset,
-            screenCenterY - boxHeight / 2 + offset,
-            boxWidth,
-            boxHeight,
-            5
-        );
+            const box = this.add.graphics();
+            box.fillStyle(0xd3d3d3, 1);
+            box.fillRoundedRect(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight, 5 * scaleFactor);
 
-        // shadow kanan
-        shadowsBox.fillRoundedRect(
-            rightHalfCenterX - boxWidth / 2 - gapOffset + offset,
-            screenCenterY - boxHeight / 2 + offset,
-            boxWidth,
-            boxHeight,
-            5
-        );
+            const img = this.add.image(0, -10 * scaleFactor, assetKey);
+            img.setDisplaySize(180 * scaleFactor, 180 * scaleFactor);
 
-        const graphics = this.add.graphics();
-        graphics.fillStyle(0xd3d3d3, 1);
+            const label = this.add.text(0, boxHeight / 2 - 25 * scaleFactor, labelText, LOWER_CASE.title)
+                .setOrigin(0.5)
+                .setScale(scaleFactor);
 
-        // kotak di half kiri
-        graphics.fillRoundedRect(
-            leftHalfCenterX - boxWidth / 2 + gapOffset,
-            screenCenterY - boxHeight / 2,
-            boxWidth,
-            boxHeight,
-            5
-        );
-        const gambarMobil = this.add.image(leftHalfCenterX + gapOffset, screenCenterY, 'pilih_mobil');
-        gambarMobil.setDisplaySize(200, 200);
-        gambarMobil.setInteractive({ useHandCursor: true });
-        gambarMobil.on('pointerdown', () => pilihKendaraan('mobil'));
-        const vehicleNameCar = this.add
-            .text(leftHalfCenterX + gapOffset, screenCenterY + 100, 'Mobil', LOWER_CASE.title)
-            .setOrigin(0.5);
+            container.add([shadow, box, img, label]);
 
-        // kotak di half kanan
-        graphics.fillRoundedRect(
-            rightHalfCenterX - boxWidth / 2 - gapOffset,
-            screenCenterY - boxHeight / 2,
-            boxWidth,
-            boxHeight,
-            5
-        );
-        const gambarMotor = this.add.image(rightHalfCenterX - gapOffset, screenCenterY, 'pilih_motor');
-        gambarMotor.setDisplaySize(200, 200);
-        gambarMotor.setInteractive({ useHandCursor: true });
-        gambarMotor.on('pointerdown', () => pilihKendaraan('motor'));
-        const vehicleNameMotor = this.add
-            .text(rightHalfCenterX - gapOffset, screenCenterY + 100, 'Motor', LOWER_CASE.title)
-            .setOrigin(0.5);
+            const hitArea = new Phaser.Geom.Rectangle(-boxWidth / 2, -boxHeight / 2, boxWidth, boxHeight);
+            container.setInteractive(hitArea, Phaser.Geom.Rectangle.Contains);
+            container.input.cursor = 'pointer';
+            container.on('pointerdown', () => pilihKendaraan(vehicleType));
 
-        // tombol back segitiga
-        const size = 70;
+            return container;
+        };
 
-        const triangleShadow = this.add.triangle(
-            50 + offset,
-            this.cameras.main.worldView.y + this.cameras.main.height - 80 + offset,
-            0,
-            size * 0.5,
-            size,
-            0,
-            size,
-            size,
-            0x000000,
-            0.3
+        createVehicleCard(centerX - spacing, centerY, 'pilih_mobil', 'Mobil', 'mobil');
+        createVehicleCard(centerX + spacing, centerY, 'pilih_motor', 'Motor', 'motor');
+
+        const triSize = 60 * scaleFactor;
+        const triX = 50 * scaleFactor;
+        const triY = height * 0.88;
+
+        this.add.triangle(
+            triX + offset, triY + offset,
+            0, triSize * 0.5,
+            triSize, 0,
+            triSize, triSize,
+            0x000000, 0.3
         );
 
         const triangle = this.add.triangle(
-            50,
-            this.cameras.main.worldView.y + this.cameras.main.height - 80,
-            0,
-            size * 0.5,
-            size,
-            0,
-            size,
-            size,
+            triX, triY,
+            0, triSize * 0.5,
+            triSize, 0,
+            triSize, triSize,
             0xffffff
         );
-        triangle.setStrokeStyle(4, 0x000000);
-
+        triangle.setStrokeStyle(4 * scaleFactor, 0x000000);
         triangle.setInteractive({ useHandCursor: true });
+
         triangle.on('pointerdown', () => {
             this.sound.play('sfxClick');
             this.scene.start('WelcomeScene');
