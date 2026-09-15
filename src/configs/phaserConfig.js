@@ -5,6 +5,7 @@ import VehicleScene from "../scenes/VehicleScene";
 import BootScene from "../scenes/BootScene";
 import PreloadScene from "../scenes/PreloadScene";
 import MusicScene from "../scenes/MusicScene";
+import Level1Scene from "../scenes/Levels/Level1Scene";
 
 /** @type {Phaser.Types.Core.GameConfig} */
 const phaserConfig = {
@@ -30,7 +31,8 @@ const phaserConfig = {
         }
     },
 
-    scene: [BootScene, PreloadScene, MusicScene, WelcomeScene, VehicleScene, LevelsScene]
+    // scene: [BootScene, PreloadScene, MusicScene, WelcomeScene, VehicleScene, LevelsScene]
+    scene: [Level1Scene]
 }
 
 export default phaserConfig

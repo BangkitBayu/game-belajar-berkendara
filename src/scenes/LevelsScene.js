@@ -215,6 +215,7 @@ export default class LevelsScene extends BaseScene {
 
         mainBtn.setInteractive({ useHandCursor: true });
         mainBtn.on('pointerdown', () => {
+            alert("halo")
             this.sound.play('sfxClick');
         });
 
