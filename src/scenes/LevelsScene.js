@@ -17,114 +17,78 @@ export default class LevelsScene extends BaseScene {
         super.create();
         const warna = 0xffffff;
 
-        // background
+        const width = this.scale.width;
+        const height = this.scale.height;
+        const screenCenterX = width / 2;
+        const screenCenterY = height / 2;
+
+        const baseWidth = 1280;
+        const baseHeight = 720;
+        const scaleFactor = Math.max(0.5, Math.min(width / baseWidth, height / baseHeight));
+        this.scaleFactor = scaleFactor;
+
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
-        background.setDisplaySize(this.scale.width, this.scale.height);
+        background.setDisplaySize(width, height);
         background.setDepth(-1);
 
-        // titik tengah
-        const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
-        const screenCenterY = this.cameras.main.worldView.y + this.cameras.main.height / 2;
+        const offset = 5 * scaleFactor;
+        const stepX = 225 * scaleFactor;
+        const lineY = screenCenterY;
+        const circleRadius = 75 * scaleFactor;
 
-        // garis penghubung antar level
         const graphics = this.add.graphics();
-        graphics.fillStyle(0xd3d3d3, 1);
-
-        const offset = 5;
-
-        // shadow line
+        
         graphics.fillStyle(0x000000, 0.3);
-        graphics.fillRoundedRect(screenCenterX - 450 + offset, screenCenterY + offset, 225, 10, 5);
-        graphics.fillRoundedRect(screenCenterX - 225 + offset, screenCenterY + offset, 225, 10, 5);
-        graphics.fillRoundedRect(screenCenterX + offset, screenCenterY + offset, 225, 10, 5);
-        graphics.fillRoundedRect(screenCenterX + 225 + offset, screenCenterY + offset, 225, 10, 5);
+        for (let i = -2; i <= 1; i++) {
+            graphics.fillRoundedRect(screenCenterX + (i * stepX) + offset, lineY + offset, stepX, 10 * scaleFactor, 5 * scaleFactor);
+        }
 
-        // line asli
         graphics.fillStyle(0xd3d3d3, 1);
-        graphics.fillRoundedRect(screenCenterX - 450, screenCenterY, 225, 10, 5);
-        graphics.fillRoundedRect(screenCenterX - 225, screenCenterY, 225, 10, 5);
-        graphics.fillRoundedRect(screenCenterX, screenCenterY, 225, 10, 5);
-        graphics.fillRoundedRect(screenCenterX + 225, screenCenterY, 225, 10, 5);
-        // lingkaran level
+        for (let i = -2; i <= 1; i++) {
+            graphics.fillRoundedRect(screenCenterX + (i * stepX), lineY, stepX, 10 * scaleFactor, 5 * scaleFactor);
+        }
 
-        const shadowLevel1 = this.add.circle(screenCenterX - 450 + offset, screenCenterY + offset, 75, 0x000000, 0.3);
-        const level1 = this.add.circle(screenCenterX - 450, screenCenterY, 75, warna);
+        for (let i = 0; i < 5; i++) {
+            const num = i + 1;
+            const x = screenCenterX + ((i - 2) * stepX);
+            const y = lineY;
 
-        const shadowLevel2 = this.add.circle(screenCenterX - 225 + offset, screenCenterY + offset, 75, 0x000000, 0.3);
-        const level2 = this.add.circle(screenCenterX - 225, screenCenterY, 75, warna);
+            this.add.circle(x + offset, y + offset, circleRadius, 0x000000, 0.3);
 
-        const shadowLevel3 = this.add.circle(screenCenterX + offset, screenCenterY + offset, 75, 0x000000, 0.3);
-        const level3 = this.add.circle(screenCenterX, screenCenterY, 75, warna);
+            const circle = this.add.circle(x, y, circleRadius, warna);
 
-        const shadowLevel4 = this.add.circle(screenCenterX + 225 + offset, screenCenterY + offset, 75, 0x000000, 0.3);
-        const level4 = this.add.circle(screenCenterX + 225, screenCenterY, 75, warna);
+            const icon = this.add.image(x, y, `level${num}`);
+            icon.setDisplaySize(100 * scaleFactor, 100 * scaleFactor);
 
-        const shadowLevel5 = this.add.circle(screenCenterX + 450 + offset, screenCenterY + offset, 75, 0x000000, 0.3);
-        const level5 = this.add.circle(screenCenterX + 450, screenCenterY, 75, warna);
-
-        // icon level
-        const level1Icon = this.add.image(screenCenterX - 450, screenCenterY, 'level1');
-        level1Icon.setDisplaySize(100, 100);
-
-        const level2Icon = this.add.image(screenCenterX - 225, screenCenterY, 'level2');
-        level2Icon.setDisplaySize(100, 100);
-
-        const level3Icon = this.add.image(screenCenterX, screenCenterY, 'level3');
-        level3Icon.setDisplaySize(100, 100);
-
-        const level4Icon = this.add.image(screenCenterX + 225, screenCenterY, 'level4');
-        level4Icon.setDisplaySize(100, 100);
-
-        const level5Icon = this.add.image(screenCenterX + 450, screenCenterY, 'level5');
-        level5Icon.setDisplaySize(100, 100);
-
-        const levelPositions = [
-            { circle: level1, x: screenCenterX - 450, num: 1 },
-            { circle: level2, x: screenCenterX - 225, num: 2 },
-            { circle: level3, x: screenCenterX, num: 3 },
-            { circle: level4, x: screenCenterX + 225, num: 4 },
-            { circle: level5, x: screenCenterX + 450, num: 5 }
-        ];
-
-        levelPositions.forEach(({ circle, num }) => {
             circle.setInteractive({ useHandCursor: true });
             circle.on('pointerdown', () => {
                 this.sound.play('sfxClick');
                 this.toggleLevelMenu(screenCenterX, screenCenterY, num);
             });
-        });
+        }
 
-        //tombol back bentuk segitiga
-        const size = 70;
+        const triSize = 60 * scaleFactor;
+        const triX = 50 * scaleFactor;
+        const triY = height * 0.88;
 
-        // shadow
-        const triangleShadow = this.add.triangle(
-            50 + offset,
-            this.cameras.main.worldView.y + this.cameras.main.height - 80 + offset,
-            0,
-            size * 0.5,
-            size,
-            0,
-            size,
-            size,
-            0x000000,
-            0.3
+        this.add.triangle(
+            triX + offset, triY + offset,
+            0, triSize * 0.5,
+            triSize, 0,
+            triSize, triSize,
+            0x000000, 0.3
         );
 
         const triangle = this.add.triangle(
-            50,
-            this.cameras.main.worldView.y + this.cameras.main.height - 80,
-            0,
-            size * 0.5,
-            size,
-            0,
-            size,
-            size,
+            triX, triY,
+            0, triSize * 0.5,
+            triSize, 0,
+            triSize, triSize,
             0xffffff
         );
-        triangle.setStrokeStyle(4, 0x000000);
-
+        triangle.setStrokeStyle(4 * scaleFactor, 0x000000);
         triangle.setInteractive({ useHandCursor: true });
+
         triangle.on('pointerdown', () => {
             this.sound.play('sfxClick');
             this.scene.start('VehicleScene');
@@ -143,75 +107,66 @@ export default class LevelsScene extends BaseScene {
 
     showLevelMenu(screenCenterX, screenCenterY, levelNumber) {
         const data = LEVELS_DATA[levelNumber];
+        const scale = this.scaleFactor;
 
-        const container = this.add.container(screenCenterX, screenCenterY - 180);
+        const container = this.add.container(screenCenterX, screenCenterY - (180 * scale));
         container.levelNumber = levelNumber;
 
-        const circleRadius = 75;
-        const level1X = -450;
+        const circleRadius = 75 * scale;
+        const level1X = -450 * scale;
         const level3X = 0;
-        const level5X = 450;
+        const level5X = 450 * scale;
 
-        const rowHeight = 140;
-        const squareSize = 140;
-        const gap = 20;
+        const rowHeight = 140 * scale;
+        const squareSize = 140 * scale;
 
-        // pilih icon kendaraan sesuai pilihan user di VehicleScene
         const vehicle = this.registry.get('vehicle');
         const vehicleKey = vehicle && vehicle.motor ? 'motor' : 'mobil';
 
-        // kotak icon
-        const square = this.add.rectangle(level1X, 0, squareSize, rowHeight, 0xffffff).setStrokeStyle(3, 0x000000);
-        const squareIcon = this.add.image(level1X, 0, vehicleKey).setDisplaySize(90, 90);
+        const square = this.add.rectangle(level1X, 0, squareSize, rowHeight, 0xffffff).setStrokeStyle(3 * scale, 0x000000);
+        const squareIcon = this.add.image(level1X, 0, vehicleKey).setDisplaySize(90 * scale, 90 * scale);
 
-        // persegi objektif
         const objLeftX = level1X + squareSize / 2;
         const objRightX = level5X + circleRadius;
         const objWidth = objRightX - objLeftX;
         const objLocalX = (objLeftX + objRightX) / 2;
 
-        const objRect = this.add.rectangle(objLocalX, 0, objWidth, rowHeight, 0xffffff).setStrokeStyle(3, 0x000000);
-        const objText = this.add
-            .text(objLocalX, 0, data.objective, {
-                fontSize: '12px',
-                color: '#000000',
-                align: 'center',
-                wordWrap: { width: objWidth - 20 }
-            })
-            .setOrigin(0.5);
+        const objRect = this.add.rectangle(objLocalX, 0, objWidth, rowHeight, 0xffffff).setStrokeStyle(3 * scale, 0x000000);
+        const objText = this.add.text(objLocalX, 0, data.objective, {
+            fontSize: `${12 * scale}px`,
+            color: '#000000',
+            align: 'center',
+            wordWrap: { width: objWidth - (20 * scale) }
+        }).setOrigin(0.5);
 
-        // tombol Main (bentuk pedal gas: persegi, pojok kiri-bawah kepotong miring)
-        const circleLocalY = 180;
-        const mainBtnHeight = 60;
-        const cut = 20;
-        const gapFromCircle = 40;
+        const circleLocalY = 180 * scale;
+        const mainBtnHeight = 60 * scale;
+        const cut = 20 * scale;
+        const gapFromCircle = 40 * scale;
 
         const mainBtnTop = circleLocalY + circleRadius + gapFromCircle;
         const mainBtnBottom = mainBtnTop + mainBtnHeight;
         const mainBtnLeftX = level3X - circleRadius;
-        const mainBtnRightX = objRightX; // presisi, sama persis sisi kanan objRect
+        const mainBtnRightX = objRightX;
 
-        const mainBtn = this.add
-            .polygon(
-                0,
-                0,
-                [
-                    mainBtnLeftX, mainBtnTop, // kiri-atas
-                    mainBtnRightX, mainBtnTop, // kanan-atas   ← sejajar sisi kanan objRect
-                    mainBtnRightX, mainBtnBottom, // kanan-bawah ← sejajar sisi kanan objRect
-                    mainBtnLeftX + cut, mainBtnBottom, // potongan bawah
-                    mainBtnLeftX, mainBtnBottom - cut // potongan kiri
-                ],
-                0xffffff
-            )
-            .setOrigin(0, 0)
-            .setStrokeStyle(3, 0x000000);
+        const mainBtn = this.add.polygon(
+            0, 0,
+            [
+                mainBtnLeftX, mainBtnTop,
+                mainBtnRightX, mainBtnTop,
+                mainBtnRightX, mainBtnBottom,
+                mainBtnLeftX + cut, mainBtnBottom,
+                mainBtnLeftX, mainBtnBottom - cut
+            ],
+            0xffffff
+        ).setOrigin(0, 0).setStrokeStyle(3 * scale, 0x000000);
 
         const mainBtnCenterX = (mainBtnLeftX + mainBtnRightX) / 2;
         const mainBtnCenterY = (mainBtnTop + mainBtnBottom) / 2;
-        const mainText = this.add
-            .text(mainBtnCenterX, mainBtnCenterY, 'Main', { fontSize: '16px', color: '#000000' })
-            .setOrigin(0.5);
+        const mainText = this.add.text(mainBtnCenterX, mainBtnCenterY, 'Main', {
+            fontSize: `${16 * scale}px`,
+            color: '#000000'
+        }).setOrigin(0.5);
 
         mainBtn.setInteractive({ useHandCursor: true });
         mainBtn.on('pointerdown', () => {
@@ -225,8 +180,8 @@ export default class LevelsScene extends BaseScene {
         });
 
         container.add([square, squareIcon, objRect, objText, mainBtn, mainText]);
+        
         container.setScale(0);
-
         this.tweens.add({
             targets: container,
             scale: 1,
