@@ -39,7 +39,6 @@ export default class Level3Scene extends Phaser.Scene {
 
         this.isGameStarted = false;
         this.gameEnded = false;
-        this.winTriggered = false;
 
         // Level 3 Objectives:
         // 1. Menjaga jarak dengan kendaraan di depan selama 10 detik

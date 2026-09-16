@@ -10,8 +10,10 @@ export default class VehicleScene extends BaseScene {
         super.create();
         let gap = 20;
 
+        // Background: stretch horizontal doang, height ikut rasio asli
         const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
-        background.setDisplaySize(this.scale.width, this.scale.height);
+        background.displayWidth = this.scale.width;
+        background.scaleY = background.scaleX;
         background.setDepth(-1);
 
         const screenCenterX = this.cameras.main.worldView.x + this.cameras.main.width / 2;
@@ -27,11 +29,10 @@ export default class VehicleScene extends BaseScene {
             this.scene.start('LevelsScene');
         };
 
-        // kotak
         const boxWidth = 225;
         const boxHeight = 225;
         const offset = 5;
-        const gapOffset = 50; // geser box ke tengah
+        const gapOffset = 50;
 
         const leftHalfCenterX = screenCenterX / 2;
         const rightHalfCenterX = screenCenterX * 1.5;
@@ -39,7 +40,6 @@ export default class VehicleScene extends BaseScene {
         const shadowsBox = this.add.graphics();
         shadowsBox.fillStyle(0x000000, 0.3);
 
-        // shadow kiri
         shadowsBox.fillRoundedRect(
             leftHalfCenterX - boxWidth / 2 + gapOffset + offset,
             screenCenterY - boxHeight / 2 + offset,
@@ -48,7 +48,6 @@ export default class VehicleScene extends BaseScene {
             5
         );
 
-        // shadow kanan
         shadowsBox.fillRoundedRect(
             rightHalfCenterX - boxWidth / 2 - gapOffset + offset,
             screenCenterY - boxHeight / 2 + offset,
@@ -60,7 +59,6 @@ export default class VehicleScene extends BaseScene {
         const graphics = this.add.graphics();
         graphics.fillStyle(0xd3d3d3, 1);
 
-        // kotak di half kiri
         graphics.fillRoundedRect(
             leftHalfCenterX - boxWidth / 2 + gapOffset,
             screenCenterY - boxHeight / 2,
@@ -76,7 +74,6 @@ export default class VehicleScene extends BaseScene {
             .text(leftHalfCenterX + gapOffset, screenCenterY + 100, 'Mobil', LOWER_CASE.title)
             .setOrigin(0.5);
 
-        // kotak di half kanan
         graphics.fillRoundedRect(
             rightHalfCenterX - boxWidth / 2 - gapOffset,
             screenCenterY - boxHeight / 2,
@@ -92,31 +89,19 @@ export default class VehicleScene extends BaseScene {
             .text(rightHalfCenterX - gapOffset, screenCenterY + 100, 'Motor', LOWER_CASE.title)
             .setOrigin(0.5);
 
-        // tombol back segitiga
         const size = 70;
 
         const triangleShadow = this.add.triangle(
             50 + offset,
             this.cameras.main.worldView.y + this.cameras.main.height - 80 + offset,
-            0,
-            size * 0.5,
-            size,
-            0,
-            size,
-            size,
-            0x000000,
-            0.3
+            0, size * 0.5, size, 0, size, size,
+            0x000000, 0.3
         );
 
         const triangle = this.add.triangle(
             50,
             this.cameras.main.worldView.y + this.cameras.main.height - 80,
-            0,
-            size * 0.5,
-            size,
-            0,
-            size,
-            size,
+            0, size * 0.5, size, 0, size, size,
             0xffffff
         );
         triangle.setStrokeStyle(4, 0x000000);

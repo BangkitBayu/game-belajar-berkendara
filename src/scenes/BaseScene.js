@@ -9,5 +9,7 @@ export default class BaseScene extends Phaser.Scene {
         this.events.once('shutdown', () => {
             this.scale.off('resize', this._resizeHandler);
         });
+
+        
     }
 }
