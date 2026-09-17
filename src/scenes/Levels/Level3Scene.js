@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import BaseScene from "../BaseScene";
 import StorageManager from "../../StorageManager";
+import Car from "../../classes/Car";
+import Motorcyle from "../../classes/Motorcyle";
 
 export default class Level3Scene extends BaseScene {
     constructor() {
@@ -20,6 +22,11 @@ export default class Level3Scene extends BaseScene {
 
         // Audio
         this.load.audio("sfxClick", "/src/assets/sound/click.mp3");
+        this.load.audio("hornSfx", "/src/assets/sound/horn-sfx.mp3");
+        this.load.audio("carGasSfx", "/src/assets/sound/car-gas-sfx.mp3");
+        this.load.audio("motorcycleGassfx", "/src/assets/sound/motorcycle-gas-sfx.mp3");
+        this.load.audio("seinSfx", "/src/assets/sound/sein-sfx.mp3");
+        this.load.audio("crashSfx", "/src/assets/sound/crash-sfx.mp3");
     }
 
     create() {
@@ -180,7 +187,7 @@ export default class Level3Scene extends BaseScene {
     // ==========================================
     createVehicles() {
         // Mobil Pemandu (Lead Car)
-        this.leadVehicle = this.physics.add.sprite(this.roadCenterX, 2980, "car_red");
+        this.leadVehicle = new Car(this, this.roadCenterX, 2980, "car_red");
         this.leadVehicle.setDisplaySize(48, 88).setTint(0x3498db).setImmovable(true).setDepth(10);
         this.leadVehicle.body.setSize(38, 76);
 
@@ -191,7 +198,18 @@ export default class Level3Scene extends BaseScene {
         this.isMotor = vehicleChoice?.motor;
         const playerKey = this.isMotor ? "motor_helm" : "car_red";
 
-        this.player = this.physics.add.sprite(this.roadCenterX, 3200, playerKey);
+        const playerSfx = {
+            horn: "hornSfx",
+            gas: this.isMotor ? "motorcycleGassfx" : "carGasSfx",
+            signal: "seinSfx"
+        };
+
+        if (this.isMotor) {
+            this.player = new Motorcyle(this, this.roadCenterX, 3200, playerKey, playerSfx);
+        } else {
+            this.player = new Car(this, this.roadCenterX, 3200, playerKey, playerSfx);
+        }
+
         this.player.setDisplaySize(this.isMotor ? 36 : 48, this.isMotor ? 75 : 88);
         this.player.body.setSize(this.isMotor ? 28 : 38, this.isMotor ? 65 : 76);
         this.player.setCollideWorldBounds(true).setDamping(true).setDrag(0.85).setDepth(12);
@@ -234,7 +252,10 @@ export default class Level3Scene extends BaseScene {
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         this.keyE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
-        this.keyB.on("down", () => this.sound.play("sfxClick"));
+        this.keyB.on("down", () => {
+            this.sound.play("sfxClick");
+            if (this.player && typeof this.player.honk === "function") this.player.honk();
+        });
         this.keyQ.on("down", () => this.toggleSein("left"));
         this.keyE.on("down", () => this.toggleSein("right"));
 
@@ -281,7 +302,10 @@ export default class Level3Scene extends BaseScene {
 
         this.createScreenBtn(brakeX, gasY, "btn_rem", btnSize, () => { this.inputState.brake = true; }, () => { this.inputState.brake = false; });
         this.createScreenBtn(gasX, gasY, "btn_gas", btnSize, () => { this.inputState.gas = true; }, () => { this.inputState.gas = false; });
-        this.createScreenBtn(bellX, bellY, "btn_bell", btnSize * 0.9, () => { this.sound.play("sfxClick"); });
+        this.createScreenBtn(bellX, bellY, "btn_bell", btnSize * 0.9, () => {
+            this.sound.play("sfxClick");
+            if (this.player && typeof this.player.honk === "function") this.player.honk();
+        });
     }
 
     createScreenBtn(x, y, textureKey, size, onDown, onUp) {
@@ -317,6 +341,16 @@ export default class Level3Scene extends BaseScene {
             if (this.rightSeinActive) this.leftSeinActive = false;
         }
         this.sound.play("sfxClick");
+
+        if (this.player && typeof this.player.setTurnSignal === "function") {
+            if (this.leftSeinActive) {
+                this.player.setTurnSignal("LEFT");
+            } else if (this.rightSeinActive) {
+                this.player.setTurnSignal("RIGHT");
+            } else {
+                this.player.setTurnSignal("OFF");
+            }
+        }
     }
 
     // ==========================================
@@ -417,10 +451,21 @@ export default class Level3Scene extends BaseScene {
 
         if (isGas) {
             this.playerSpeed = Math.min(this.playerSpeed + this.playerAcceleration * dt, this.playerMaxSpeed);
+            if (this.player && typeof this.player.playSound === "function") {
+                this.player.playSound("gas", { loop: true, volume: 0.45 });
+            }
         } else if (isBrake) {
             this.playerSpeed = Math.max(this.playerSpeed - this.playerBrakeForce * dt, 0);
-        } else if (this.playerSpeed > 90) {
-            this.playerSpeed = Math.max(this.playerSpeed - 50 * dt, 90);
+            if (this.player && typeof this.player.stopSound === "function") {
+                this.player.stopSound("gas");
+            }
+        } else {
+            if (this.player && typeof this.player.stopSound === "function") {
+                this.player.stopSound("gas");
+            }
+            if (this.playerSpeed > 90) {
+                this.playerSpeed = Math.max(this.playerSpeed - 50 * dt, 90);
+            }
         }
 
         this.player.body.setVelocityY(-this.playerSpeed);
@@ -634,6 +679,14 @@ export default class Level3Scene extends BaseScene {
         if (this.gameEnded) return;
         this.gameEnded = true;
 
+        if (this.player) {
+            if (typeof this.player.stopSound === "function") this.player.stopSound("gas");
+            if (typeof this.player.setTurnSignal === "function") this.player.setTurnSignal("OFF");
+        }
+        if (this.cache.audio.exists("crashSfx")) {
+            this.sound.play("crashSfx");
+        }
+
         this.player.body.setVelocity(0, 0);
         this.leadVehicle.body.setVelocity(0, 0);
 
@@ -667,6 +720,11 @@ export default class Level3Scene extends BaseScene {
     handleLevelWin() {
         if (this.gameEnded) return;
         this.gameEnded = true;
+
+        if (this.player) {
+            if (typeof this.player.stopSound === "function") this.player.stopSound("gas");
+            if (typeof this.player.setTurnSignal === "function") this.player.setTurnSignal("OFF");
+        }
 
         this.player.body.setVelocity(0, 0);
         this.leadVehicle.body.setVelocity(0, 0);
