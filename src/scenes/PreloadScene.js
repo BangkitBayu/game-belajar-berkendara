@@ -12,10 +12,8 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.on('progress', (value) => {
         bar.width = 300 * value;
     });
-    
+
     this.load.image('background', '/src/assets/background.png');
-    this.load.audio('bgm', '/src/assets/sound/backsound.mp3');
-    this.load.audio('sfxClick', '/src/assets/sound/click.mp3');
 
     // pindahan dari VehicleScene
     this.load.image('pilih_mobil', '/src/assets/pilih_kendaraan/pilih_mobil.png');
@@ -31,11 +29,14 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image('level3', '/src/assets/levels/3.png');
     this.load.image('level4', '/src/assets/levels/4.png');
     this.load.image('level5', '/src/assets/levels/5.png');
-    
+
+    // asset audio
+    this.load.audio('bgm', '/src/assets/sound/backsound.mp3');
+    this.load.audio('sfxClick', '/src/assets/sound/click.mp3');
 }
 
     create() {
-        
+
         this.scene.launch('MusicScene');
         this.scene.start('WelcomeScene');
 
