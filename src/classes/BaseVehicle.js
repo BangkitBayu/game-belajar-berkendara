@@ -15,6 +15,8 @@ export default class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
      */
 
     constructor(scene, x, y, texture, sfxKeys = {}) {
+        super(scene, x, y, texture);
+
         // Tambahkan objek ke scene dan sistem physics
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -28,7 +30,9 @@ export default class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
             gas: sfxKeys.gas || null,
             signal: sfxKeys.signal || null,
             ...sfxKeys
-        }
+        };
+
+        this.activeSounds = {};
 
         // Status lampu sein: 'OFF', 'LEFT', 'RIGHT'
         this.turnSignalState = 'OFF';
@@ -45,7 +49,7 @@ export default class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
             down: false,
             left: false,
             right: false,
-        }
+        };
     }
 
     /**
@@ -53,11 +57,16 @@ export default class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
    * @param {string} action - Nama aksi
    * @param {Object} [config] - Konfigurasi suara
    */
-
     playSound(action, config = {}) {
         const soundKey = this.sfxKeys[action];
-        if (soundKey) {
-            // Menjalankan sound langsung dari scene
+        if (soundKey && this.scene && this.scene.sound) {
+            if (config.loop) {
+                if (!this.activeSounds[action] || !this.activeSounds[action].isPlaying) {
+                    this.activeSounds[action] = this.scene.sound.add(soundKey, config);
+                    this.activeSounds[action].play();
+                }
+                return;
+            }
             this.scene.sound.play(soundKey, config);
         }
     }
@@ -67,9 +76,13 @@ export default class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
      * @param {string} action - Nama aksi
      */
     stopSound(action) {
+        if (this.activeSounds && this.activeSounds[action]) {
+            this.activeSounds[action].stop();
+            this.activeSounds[action].destroy();
+            this.activeSounds[action] = null;
+        }
         const soundKey = this.sfxKeys[action];
-        if (soundKey) {
-            // Menghentikan audio berdasarkan key di scene
+        if (soundKey && this.scene && this.scene.sound) {
             this.scene.sound.stopByKey(soundKey);
         }
     }
@@ -78,28 +91,28 @@ export default class BaseVehicle extends Phaser.Physics.Arcade.Sprite {
    * Membunyikan suara klakson kendaraan.
    */
     honk() {
-        this.playSound('horn')
+        this.playSound('horn');
     }
 
     /**
        * Mengatur status lampu sein kendaraan.
        * @param {'OFF' | 'LEFT' | 'RIGHT'} state
        */
-    setTurnSignal(state, turnSignal = this.turnSignalState, signalTimer = this.signalTimer) {
-        turnSignal = state
+    setTurnSignal(state) {
+        this.turnSignalState = state;
 
         // Hentikan timer berkedip sebelumnya jika ada
-        if (signalTimer) {
-            signalTimer.destroy()
-            signalTimer = null
-            this.clearTint() //Kembali ke warna awal
-            this.stopSound('signal')
+        if (this.signalTimer) {
+            this.signalTimer.destroy();
+            this.signalTimer = null;
+            this.clearTint(); // Kembali ke warna awal
+            this.stopSound('signal');
         }
 
         if (state === 'OFF') return;
 
         // Simulasi visual lampu sein dengan efek berkedip (Tint Warna)
-        signalTimer = this.scene.time.addEvent({
+        this.signalTimer = this.scene.time.addEvent({
             delay: 400, // Kedip setiap 400ms
             loop: true,
             callback: () => {
