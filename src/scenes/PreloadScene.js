@@ -33,6 +33,11 @@ export default class PreloadScene extends Phaser.Scene {
     // asset audio
     this.load.audio('bgm', '/src/assets/sound/backsound.mp3');
     this.load.audio('sfxClick', '/src/assets/sound/click.mp3');
+    this.load.audio('carGasSfx', '/src/assets/sound/car-gas-sfx.mp3');
+    this.load.audio('crashSfx', '/src/assets/sound/crash-sfx.mp3');
+    this.load.audio('hornSfx', '/src/assets/sound/horn-sfx.mp3');
+    this.load.audio('motorcycleGassfx', '/src/assets/sound/motorcycle-gas-sfx.mp3');
+    this.load.audio('seinSfx', '/src/assets/sound/sein-sfx.mp3');
 }
 
     create() {
