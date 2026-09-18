@@ -31,8 +31,8 @@ export default class StraightRoadMap extends BaseMap {
 
             // 2. Trotoar Kiri & Kanan
             this.graphics.fillStyle(0xcccccc, 1);
-            this.graphics.fillRect(this.roadLeft - this.sidewalkWidth, 0, this.sidewalkWidth, this.height);
-            this.graphics.fillRect(this.roadRight, 0, this.sidewalkWidth, this.height);
+            this.graphics.fillRect(this.roadLeft - this.sideWalkWidth, 0, this.sideWalkWidth, this.height);
+            this.graphics.fillRect(this.roadRight, 0, this.sideWalkWidth, this.height);
 
             // 3. Aspal Jalan Utama
             this.graphics.fillStyle(0x2d3436, 1);
@@ -56,7 +56,7 @@ export default class StraightRoadMap extends BaseMap {
     createColliders() {
         const centerY = this.y + (this.height / 2);
 
-        this.addStaticBound(this.roadLeft - (this.sidewalkWidth / 2), centerY, this.sidewalkWidth, this.height);
-        this.addStaticBound(this.roadRight + (this.sidewalkWidth / 2), centerY, this.sidewalkWidth, this.height);
+        this.addStaticBound(this.roadLeft - (this.sideWalkWidth / 2), centerY, this.sideWalkWidth, this.height);
+        this.addStaticBound(this.roadRight + (this.sideWalkWidth / 2), centerY, this.sideWalkWidth, this.height);
     }
 }

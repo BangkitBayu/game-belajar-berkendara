@@ -41,7 +41,7 @@ export default class Level1Scene extends Phaser.Scene {
             width: window.innerWidth,
             height: window.innerHeight,
             roadWidth: 500,
-            sidewalkWidth: 50
+            sideWalkWidth: 50
         }, this.mapBounds)
 
         // Kendaraan Pemain

@@ -18,7 +18,7 @@ export default class BaseMap {
         this.width = config.width //Lebar layar
         this.height = config.height //tinggi layar
         this.roadWidth = config.roadWidth //lebar jalan
-        this.sideWalkWidth = config.sidewalkWidth // lebar trotoar
+        this.sideWalkWidth = config.sideWalkWidth // lebar trotoar
 
         this.centerX = this.width / 2 //posisi tengah koordinat x
 
