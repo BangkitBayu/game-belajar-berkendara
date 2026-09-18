@@ -43,7 +43,9 @@ export default class StraightRoadMap extends BaseMap {
     * Method untuk membuat colliders
     */
     createColliders() {
-        this.addStaticBound(this.roadLeft - (this.sidewalkWidth / 2), this.height / 2, this.sidewalkWidth, this.height);
-        this.addStaticBound(this.roadRight + (this.sidewalkWidth / 2), this.height / 2, this.sidewalkWidth, this.height);
+        const centerY = this.y + (this.height / 2);
+
+        this.addStaticBound(this.roadLeft - (this.sidewalkWidth / 2), centerY, this.sidewalkWidth, this.height);
+        this.addStaticBound(this.roadRight + (this.sidewalkWidth / 2), centerY, this.sidewalkWidth, this.height);
     }
 }

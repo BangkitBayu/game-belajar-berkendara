@@ -6,18 +6,20 @@ export default class Level1Scene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.tilemapTiledJSON("tilemap_json", "/src/assets/mapJson/jalan_base_json.tmj");
-        this.load.image("tilemap_img", "/src/assets/map/jalan_base.png");
+        // Aset kendaraan
+        this.load.image("car_red", "/src/assets/kendaraan/car-red-top.png");
+        this.load.image("motor_helm", "/src/assets/kendaraan/motor-top-helm.png");
+
+        // 5 Tombol kontrol layar sesuai Product Scope
+        this.load.image("btn_kiri", "/src/assets/Kiri.png");
+        this.load.image("btn_kanan", "/src/assets/Kanan.png");
+        this.load.image("btn_gas", "/src/assets/Atas.png");
+        this.load.image("btn_rem", "/src/assets/Bawah.png");
+        this.load.image("btn_bell", "/src/assets/Bell-removebg-preview.png");
     }
 
     create() {
-        const map = this.make.tilemap({ key: "tilemap_json" });
-
-        // Parameter pertama 'roads' SAMA PERSIS dengan nama tileset (bukan 'tanah')
-        const tileset = map.addTilesetImage("tanah", "tileset_key");
-
-        // 'Tile Layer 1' SAMA PERSIS dengan nama di JSON kamu ("name": "Tile Layer 1")
-        const jalanLayer = map.createLayer('Tile Layer 1', tileset, 0, 0);
+       
     }
 
     update() {
