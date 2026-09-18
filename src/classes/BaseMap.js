@@ -12,10 +12,13 @@ export default class BaseMap {
     constructor(scene, config = {}) {
         this.scene = scene
 
+        this.x = config.x
+        this.y = config.y
+
         this.width = config.width //Lebar layar
         this.height = config.height //tinggi layar
         this.roadWidth = config.roadWidth //lebar jalan
-        this.sideWalkWidth = config.sideWalkWidth // lebar trotoar
+        this.sideWalkWidth = config.sidewalkWidth // lebar trotoar
 
         this.centerX = this.width / 2 //posisi tengah koordinat x
 
